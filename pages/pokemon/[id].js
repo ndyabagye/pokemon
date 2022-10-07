@@ -5,7 +5,22 @@ import styles from "../../styles/Details.module.css";
 import Link from "next/link";
 import Head from "next/head";
 
-export async function getServerSideProps({ params }) {
+export async function getStaticPaths() {
+  const res = await fetch(
+    "https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json"
+  );
+
+  const pokemon = await res.json();
+
+  return {
+    paths: pokemon.map((pokemon) => ({
+      params: { id: pokemon.id.toString() },
+    })),
+    fallback: false,
+  };
+}
+
+export async function getStaticProps({ params }) {
   const res = await fetch(
     `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
   );
@@ -15,23 +30,33 @@ export async function getServerSideProps({ params }) {
     },
   };
 }
+// export async function getServerSideProps({ params }) {
+//   const res = await fetch(
+//     `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`
+//   );
+//   return {
+//     props: {
+//       pokemon: await res.json(),
+//     },
+//   };
+// }
 export default function Details({ pokemon }) {
-//   const {
-//     query: { id },
-//   } = useRouter();
+  //   const {
+  //     query: { id },
+  //   } = useRouter();
 
-//   const [pokemon, setPokemon] = useState(null);
+  //   const [pokemon, setPokemon] = useState(null);
 
-//   useEffect(() => {
-//     async function getPokemon() {
-//       const res = await fetch(
-//         `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
-//       );
-//       setPokemon(await res.json());
-//     }
+  //   useEffect(() => {
+  //     async function getPokemon() {
+  //       const res = await fetch(
+  //         `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`
+  //       );
+  //       setPokemon(await res.json());
+  //     }
 
-//     getPokemon();
-//   }, [id]);
+  //     getPokemon();
+  //   }, [id]);
 
   if (!pokemon) {
     return null;
